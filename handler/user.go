@@ -7,6 +7,10 @@ import (
 	"github.com/mhafidk/ngartos/model"
 )
 
+type updateUser struct {
+	Username string `json:"username"`
+}
+
 func CreateUser(c *fiber.Ctx) error {
 	db := database.DB.Db
 	user := new(model.User)
@@ -55,6 +59,42 @@ func GetSingleUser(c *fiber.Ctx) error {
 	return c.Status(200).JSON(fiber.Map{
 		"status": "success",
 		"message": "User found",
+		"data": user,
+	})
+}
+
+func UpdateUser(c *fiber.Ctx) error {
+	db := database.DB.Db
+
+	var user model.User
+
+	id := c.Params("id")
+
+	db.Find(&user, "id = ?", id)
+	if user.ID == uuid.Nil {
+		return c.Status(404).JSON(fiber.Map{
+			"status": "not found",
+			"message": "User not found",
+			"data": nil,
+		})
+	}
+
+	var updateUserData updateUser
+	err := c.BodyParser(&updateUserData)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"status": "error",
+			"message": "Something is wrong with the input data",
+			"data": err,
+		})
+	}
+
+	user.Username = updateUserData.Username
+	db.Save(&user)
+
+	return c.Status(200).JSON(fiber.Map{
+		"status": "success",
+		"message": "User is successfully updated",
 		"data": user,
 	})
 }
