@@ -17,7 +17,7 @@ func CreateUser(c *fiber.Ctx) error {
 
 	err := c.BodyParser(user)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
+		return c.Status(400).JSON(fiber.Map{
 			"status": "error",
 			"message": "Something is wrong with the input data",
 			"data": err,
@@ -35,7 +35,7 @@ func CreateUser(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(fiber.Map{
 		"status": "success",
-		"message": "User is successfully created",
+		"message": "User created",
 		"data": user,
 	})
 }
@@ -82,7 +82,7 @@ func UpdateUser(c *fiber.Ctx) error {
 	var updateUserData updateUser
 	err := c.BodyParser(&updateUserData)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{
+		return c.Status(400).JSON(fiber.Map{
 			"status": "error",
 			"message": "Something is wrong with the input data",
 			"data": err,
@@ -94,7 +94,39 @@ func UpdateUser(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(fiber.Map{
 		"status": "success",
-		"message": "User is successfully updated",
+		"message": "User updated",
 		"data": user,
+	})
+}
+
+func DeleteUser(c *fiber.Ctx) error {
+	db := database.DB.Db
+
+	var user model.User
+
+	id := c.Params("id")
+
+	db.Find(&user, "id = ?", id)
+	if user.ID == uuid.Nil {
+		return c.Status(404).JSON(fiber.Map{
+			"status": "not found",
+			"message": "User not found",
+			"data": nil,
+		})
+	}
+
+	err := db.Delete(&user, "id = ?", id).Error
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"status": "error",
+			"message": "Failed to delete user",
+			"data": err,
+		})
+	}
+
+	return c.Status(200).JSON(fiber.Map{
+		"status": "success",
+		"message": "User deleted",
+		"data": nil,
 	})
 }
