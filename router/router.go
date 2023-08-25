@@ -20,6 +20,7 @@ func SetupRoutes(app *fiber.App) {
 		SigningKey: jwtware.SigningKey{Key: []byte(jwtSecretKey)},
 	}))
 
+	users.Get("/me", handler.GetCurrentUser)
 	users.Get("/:id", handler.GetSingleUser)
 	users.Put("/:id", handler.UpdateUser)
 	users.Delete("/:id", handler.DeleteUser)

@@ -12,6 +12,31 @@ type updateUser struct {
 	Username string `json:"username"`
 }
 
+func GetCurrentUser(c *fiber.Ctx) error {
+	db := database.DB.Db
+
+	var user model.User
+
+	currentUser := c.Locals("user").(*jwt.Token)
+	claims := currentUser.Claims.(jwt.MapClaims)
+	email := claims["email"].(string)
+
+	db.Find(&user, "email = ?", email)
+	if user.ID == uuid.Nil {
+		return c.Status(404).JSON(fiber.Map{
+			"status": "not found",
+			"message": "User not found",
+			"data": nil,
+		})
+	}
+
+	return c.Status(200).JSON(fiber.Map{
+		"status": "success",
+		"message": "User found",
+		"data": user,
+	})
+}
+
 func GetSingleUser(c *fiber.Ctx) error {
 	db := database.DB.Db
 
