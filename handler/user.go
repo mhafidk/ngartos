@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"github.com/mhafidk/ngartos/database"
 	"github.com/mhafidk/ngartos/model"
 )
@@ -31,6 +32,29 @@ func CreateUser(c *fiber.Ctx) error {
 	return c.Status(200).JSON(fiber.Map{
 		"status": "success",
 		"message": "User is successfully created",
+		"data": user,
+	})
+}
+
+func GetSingleUser(c *fiber.Ctx) error {
+	db := database.DB.Db
+
+	id := c.Params("id")
+
+	var user model.User
+
+	db.Find(&user, "id = ?", id)
+	if user.ID == uuid.Nil {
+		return c.Status(404).JSON(fiber.Map{
+			"status": "not found",
+			"message": "User not found",
+			"data": nil,
+		})
+	}
+
+	return c.Status(200).JSON(fiber.Map{
+		"status": "success",
+		"message": "User found",
 		"data": user,
 	})
 }
