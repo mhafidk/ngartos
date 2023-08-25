@@ -33,7 +33,12 @@ func GetCurrentUser(c *fiber.Ctx) error {
 	return c.Status(200).JSON(fiber.Map{
 		"status": "success",
 		"message": "User found",
-		"data": user,
+		"data": fiber.Map{
+			"username": user.Username,
+			"email": user.Email,
+			"createdAt": user.CreatedAt,
+			"updatedAt": user.UpdatedAt,
+		},
 	})
 }
 
@@ -68,7 +73,12 @@ func GetSingleUser(c *fiber.Ctx) error {
 	return c.Status(200).JSON(fiber.Map{
 		"status": "success",
 		"message": "User found",
-		"data": user,
+		"data": fiber.Map{
+			"username": user.Username,
+			"email": user.Email,
+			"createdAt": user.CreatedAt,
+			"updatedAt": user.UpdatedAt,
+		},
 	})
 }
 
@@ -104,7 +114,12 @@ func UpdateUser(c *fiber.Ctx) error {
 	return c.Status(200).JSON(fiber.Map{
 		"status": "success",
 		"message": "User updated",
-		"data": user,
+		"data": fiber.Map{
+			"username": user.Username,
+			"email": user.Email,
+			"createdAt": user.CreatedAt,
+			"updatedAt": user.UpdatedAt,
+		},
 	})
 }
 
