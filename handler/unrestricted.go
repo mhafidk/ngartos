@@ -33,15 +33,7 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
-	var credential string
-	if user.Username == "" {
-		credential = user.Email
-	}
-	if user.Email == "" {
-		credential = user.Username
-	}
-
-	if credential == "" || user.Password == "" {
+	if user.Email == "" || user.Password == "" {
 		return c.Status(400).JSON(fiber.Map{
 			"status": "error",
 			"message": "Email or password could not be blank",
@@ -51,12 +43,7 @@ func Login(c *fiber.Ctx) error {
 
 	userPassword := user.Password
 
-	if user.Username == "" {
-		db.Find(&user, "email = ?", user.Email)
-	}
-	if user.Email == "" {
-		db.Find(&user, "username = ?", user.Username)
-	}
+	db.Find(&user, "email = ? or username = ?", user.Email, user.Email)
 	if user.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
 			"status": "error",
