@@ -158,7 +158,7 @@ func GetAllTopics(c *fiber.Ctx) error {
 
 	var topics []model.Topic
 
-	db.Find(&topics)
+	db.Select("name", "id", "parent_id").Find(&topics)
 	if len(topics) == 0 {
 		return c.Status(404).JSON(fiber.Map{
 			"status": "error",
@@ -167,9 +167,27 @@ func GetAllTopics(c *fiber.Ctx) error {
 		})
 	}
 
+	var mainTopics []model.Topic
+	for _, topic := range topics {
+		if topic.ParentID == nil {
+			mainTopics = append(mainTopics, topic)
+		}
+	}
+
+	groupedTopics := make(map[string][]model.Topic)
+	for _, topic := range topics {
+		if topic.ParentID != nil {
+			groupedTopics[topic.ParentID.String()] = append(groupedTopics[topic.ParentID.String()], topic)
+		}
+	}
+
 	return c.Status(200).JSON(fiber.Map{
 		"status": "sucess",
 		"message": "Topic Found",
-		"data": topics,
+		"data": fiber.Map{
+			"main_topics": mainTopics,
+			"grouped_topics": groupedTopics,
+			"total_topics": len(topics),
+		},
 	})
 }
