@@ -168,15 +168,11 @@ func GetAllTopics(c *fiber.Ctx) error {
 	}
 
 	var mainTopics []model.Topic
+	groupedTopics := make(map[string][]model.Topic)
 	for _, topic := range topics {
 		if topic.ParentID == nil {
 			mainTopics = append(mainTopics, topic)
-		}
-	}
-
-	groupedTopics := make(map[string][]model.Topic)
-	for _, topic := range topics {
-		if topic.ParentID != nil {
+		} else {
 			groupedTopics[topic.ParentID.String()] = append(groupedTopics[topic.ParentID.String()], topic)
 		}
 	}
