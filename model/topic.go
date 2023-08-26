@@ -10,6 +10,7 @@ type Topic struct {
 	ID uuid.UUID `gorm:"type:uuid"`
 	Name string `json:"name"`
 	Content string `json:"content"`
+	Slug string `gorm:"uniqueIndex"`
 	ParentID *uuid.UUID `json:"parent_id"`
 	Parent *Topic
 }

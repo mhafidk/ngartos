@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"strings"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/mhafidk/ngartos/database"
@@ -24,6 +26,9 @@ func CreateTopic(c *fiber.Ctx) error {
 			"data": err,
 		})
 	}
+
+	slug := strings.ReplaceAll(topic.Name, " ", "-")
+	topic.Slug = strings.ToLower(slug)
 
 	err = db.Create(&topic).Error
 	if err != nil {
