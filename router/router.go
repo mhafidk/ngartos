@@ -30,4 +30,5 @@ func SetupRoutes(app *fiber.App) {
 	topics.Post("/", handler.CreateTopic)
 	topics.Get("/:id", handler.GetSingleTopic)
 	topics.Put("/:id", handler.UpdateTopic)
+	topics.Delete("/:id", handler.DeleteTopic)
 }

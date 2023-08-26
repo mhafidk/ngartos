@@ -59,7 +59,7 @@ func GetSingleTopic(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(fiber.Map{
 		"status": "success",
-		"message": "User found",
+		"message": "Topic found",
 		"data": fiber.Map{
 			"name": topic.Name,
 			"content": topic.Content,
@@ -107,12 +107,44 @@ func UpdateTopic(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(fiber.Map{
 		"status": "success",
-		"message": "User updated",
+		"message": "Topic updated",
 		"data": fiber.Map{
 			"name": topic.Name,
 			"content": topic.Content,
 			"createdAt": topic.CreatedAt,
 			"updatedAt": topic.UpdatedAt,
 		},
+	})
+}
+
+func DeleteTopic(c *fiber.Ctx) error {
+	db := database.DB.Db
+
+	var topic model.Topic
+
+	id := c.Params("id")
+
+	db.Find(&topic, "id = ?", id)
+	if topic.ID == uuid.Nil {
+		return c.Status(404).JSON(fiber.Map{
+			"status": "not found",
+			"message": "Topic not found",
+			"data": nil,
+		})
+	}
+
+	err := db.Delete(&topic, "id = ?", id).Error
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"status": "error",
+			"message": "Failed to delete topic",
+			"data": err,
+		})
+	}
+
+	return c.Status(200).JSON(fiber.Map{
+		"status": "success",
+		"message": "Topic deleted",
+		"data": nil,
 	})
 }
