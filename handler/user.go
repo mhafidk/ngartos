@@ -109,7 +109,14 @@ func UpdateUser(c *fiber.Ctx) error {
 	}
 
 	user.Username = updateUserData.Username
-	db.Save(&user)
+	err = db.Save(&user).Error
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"status": "error",
+			"message": "Could not update the user",
+			"data": err,
+		})
+	}
 
 	return c.Status(200).JSON(fiber.Map{
 		"status": "success",
