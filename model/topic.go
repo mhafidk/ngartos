@@ -8,9 +8,9 @@ import (
 type Topic struct {
 	gorm.Model
 	ID uuid.UUID `gorm:"type:uuid"`
-	Name string
-	Content string
-	ParentID *uuid.UUID
+	Name string `json:"name"`
+	Content string `json:"content"`
+	ParentID *uuid.UUID `json:"parent_id"`
 	Parent *Topic
 }
 

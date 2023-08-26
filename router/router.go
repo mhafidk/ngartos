@@ -10,6 +10,7 @@ import (
 func SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
 	users := api.Group("/users")
+	topics := api.Group("/topics")
 
 	api.Get("/check", handler.Check)
 	api.Post("/login", handler.Login)
@@ -25,4 +26,6 @@ func SetupRoutes(app *fiber.App) {
 	users.Get("/:id", handler.GetSingleUser)
 	users.Put("/:id", handler.UpdateUser)
 	users.Delete("/:id", handler.DeleteUser)
+
+	topics.Post("/", handler.CreateTopic)
 }
