@@ -1,6 +1,8 @@
 package model
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -11,6 +13,9 @@ type User struct {
 	Username string `gorm:"uniqueIndex" json:"username"`
 	Email string `gorm:"uniqueIndex" json:"email"`
 	Password string `json:"password"`
+	VerificationToken string
+	Verified bool
+	VerifyAt *time.Time
 }
 
 type Users struct {

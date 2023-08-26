@@ -9,6 +9,7 @@ import (
 	"github.com/mhafidk/ngartos/config"
 	"github.com/mhafidk/ngartos/database"
 	"github.com/mhafidk/ngartos/model"
+	"github.com/thanhpk/randstr"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -121,6 +122,10 @@ func CreateUser(c *fiber.Ctx) error {
 
 	user.Password = string(hash)
 
+	verificationToken := randstr.Hex(16)
+	user.VerificationToken = verificationToken
+	user.Verified = false
+
 	err = db.Create(&user).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
@@ -130,31 +135,46 @@ func CreateUser(c *fiber.Ctx) error {
 		})
 	}
 
-	exp := time.Now().Add(time.Hour * 72).Unix()
-	claims := jwt.MapClaims{
-		"email": user.Email,
-		"admin": false,
-		"exp": exp,
+	return c.Status(200).JSON(fiber.Map{
+		"status": "success",
+		"message": "User created",
+		"data": nil,
+	})
+}
+
+func VerifyEmail(c *fiber.Ctx) error {
+	db := database.DB.Db
+
+	token := c.Params("token")
+
+	var user model.User
+
+	db.Find(&user, "verification_token = ?", token)
+	if user.ID == uuid.Nil {
+		return c.Status(404).JSON(fiber.Map{
+			"status": "not found",
+			"message": "User not found",
+			"data": nil,
+		})
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	verifyAt := time.Now()
+	user.VerifyAt = &verifyAt
+	user.Verified = true
+	user.VerificationToken = ""
 
-	jwtSecretKey := config.Config("JWT_SECRET_KEY")
-	t, err := token.SignedString([]byte(jwtSecretKey))
+	err := db.Save(&user).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"status": "error",
-			"message": "There is something wrong",
+			"message": "Could not verified the user",
 			"data": err,
 		})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
 		"status": "success",
-		"message": "User created",
-		"data": fiber.Map{
-			"token": t,
-			"exp": exp,
-		},
+		"message": "User verified",
+		"data": nil,
 	})
 }
