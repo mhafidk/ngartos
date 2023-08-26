@@ -148,3 +148,24 @@ func DeleteTopic(c *fiber.Ctx) error {
 		"data": nil,
 	})
 }
+
+func GetAllTopic(c *fiber.Ctx) error {
+	db := database.DB.Db
+
+	var topics []model.Topic
+
+	db.Find(&topics)
+	if len(topics) == 0 {
+		return c.Status(404).JSON(fiber.Map{
+			"status": "error",
+			"message": "Topic not found",
+			"data": nil,
+		})
+	}
+
+	return c.Status(200).JSON(fiber.Map{
+		"status": "sucess",
+		"message": "Topic Found",
+		"data": topics,
+	})
+}
