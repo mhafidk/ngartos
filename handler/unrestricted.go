@@ -44,7 +44,7 @@ func Login(c *fiber.Ctx) error {
 
 	userPassword := user.Password
 
-	db.Find(&user, "email = ? OR username = ? AND verified = 1", user.Email, user.Email)
+	db.Find(&user, "(email = ? OR username = ?) AND verified = ?", user.Email, user.Email, true)
 	if user.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
 			"status": "error",
