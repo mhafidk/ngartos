@@ -47,6 +47,7 @@ func GetSingleTopic(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	var topic model.Topic
+	var topicChildren []model.Topic
 
 	db.Find(&topic, "id = ?", id)
 	if topic.ID == uuid.Nil {
@@ -57,6 +58,8 @@ func GetSingleTopic(c *fiber.Ctx) error {
 		})
 	}
 
+	db.Select("name", "id", "parent_id").Find(&topicChildren, "parent_id = ?", topic.ID)
+
 	return c.Status(200).JSON(fiber.Map{
 		"status": "success",
 		"message": "Topic found",
@@ -65,6 +68,7 @@ func GetSingleTopic(c *fiber.Ctx) error {
 			"content": topic.Content,
 			"createdAt": topic.CreatedAt,
 			"updatedAt": topic.UpdatedAt,
+			"children": topicChildren,
 		},
 	})
 }
@@ -149,7 +153,7 @@ func DeleteTopic(c *fiber.Ctx) error {
 	})
 }
 
-func GetAllTopic(c *fiber.Ctx) error {
+func GetAllTopics(c *fiber.Ctx) error {
 	db := database.DB.Db
 
 	var topics []model.Topic
