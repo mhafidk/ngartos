@@ -105,6 +105,8 @@ func UpdateTopic(c *fiber.Ctx) error {
 	}
 
 	topic.Name = updateTopicData.Name
+	slug := strings.ReplaceAll(topic.Name, " ", "-")
+	topic.Slug = strings.ToLower(slug)
 	err = db.Save(&topic).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
