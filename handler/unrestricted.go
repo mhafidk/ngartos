@@ -130,7 +130,7 @@ func CreateUser(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"status": "error",
-			"message": "Could not create a user",
+			"message": "Could not create user",
 			"data": err,
 		})
 	}
@@ -167,7 +167,7 @@ func VerifyEmail(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"status": "error",
-			"message": "Could not verified the user",
+			"message": "Could not verify the user",
 			"data": err,
 		})
 	}

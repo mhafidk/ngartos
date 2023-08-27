@@ -11,6 +11,7 @@ func SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
 	users := api.Group("/users")
 	topics := api.Group("/topics")
+	exercise := api.Group("/exercises")
 
 	api.Get("/check", handler.Check)
 	api.Post("/login", handler.Login)
@@ -32,4 +33,11 @@ func SetupRoutes(app *fiber.App) {
 	topics.Get("/", handler.GetAllTopics)
 	topics.Put("/:slug", handler.UpdateTopic)
 	topics.Delete("/:slug", handler.DeleteTopic)
+
+	exercise.Post("/", handler.CreateExercise)
+	exercise.Get("/:slug", handler.GetSingleExercise)
+	exercise.Get("/", handler.GetAllExercises)
+	exercise.Get("/topic/:topic_slug", handler.GetAllTopicExercises)
+	exercise.Put("/:slug", handler.UpdateExercise)
+	exercise.Delete("/:slug", handler.DeleteExercise)
 }
