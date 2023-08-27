@@ -49,12 +49,12 @@ func CreateTopic(c *fiber.Ctx) error {
 func GetSingleTopic(c *fiber.Ctx) error {
 	db := database.DB.Db
 
-	id := c.Params("id")
+	slug := c.Params("slug")
 
 	var topic model.Topic
 	var topicChildren []model.Topic
 
-	db.Find(&topic, "id = ?", id)
+	db.Find(&topic, "slug = ?", slug)
 	if topic.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
 			"status": "not found",
@@ -63,7 +63,7 @@ func GetSingleTopic(c *fiber.Ctx) error {
 		})
 	}
 
-	db.Select("name", "id", "parent_id").Find(&topicChildren, "parent_id = ?", topic.ID)
+	db.Select("name", "id", "parent_id", "slug").Find(&topicChildren, "parent_id = ?", topic.ID)
 
 	return c.Status(200).JSON(fiber.Map{
 		"status": "success",
@@ -71,6 +71,7 @@ func GetSingleTopic(c *fiber.Ctx) error {
 		"data": fiber.Map{
 			"name": topic.Name,
 			"content": topic.Content,
+			"slug": topic.Slug,
 			"createdAt": topic.CreatedAt,
 			"updatedAt": topic.UpdatedAt,
 			"children": topicChildren,
@@ -83,9 +84,9 @@ func UpdateTopic(c *fiber.Ctx) error {
 
 	var topic model.Topic
 
-	id := c.Params("id")
+	slug := c.Params("slug")
 
-	db.Find(&topic, "id = ?", id)
+	db.Find(&topic, "slug = ?", slug)
 	if topic.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
 			"status": "not found",
@@ -105,8 +106,8 @@ func UpdateTopic(c *fiber.Ctx) error {
 	}
 
 	topic.Name = updateTopicData.Name
-	slug := strings.ReplaceAll(topic.Name, " ", "-")
-	topic.Slug = strings.ToLower(slug)
+	slugUpdate := strings.ReplaceAll(topic.Name, " ", "-")
+	topic.Slug = strings.ToLower(slugUpdate)
 	err = db.Save(&topic).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
@@ -133,9 +134,9 @@ func DeleteTopic(c *fiber.Ctx) error {
 
 	var topic model.Topic
 
-	id := c.Params("id")
+	slug := c.Params("slug")
 
-	db.Find(&topic, "id = ?", id)
+	db.Find(&topic, "slug = ?", slug)
 	if topic.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
 			"status": "not found",
@@ -144,7 +145,7 @@ func DeleteTopic(c *fiber.Ctx) error {
 		})
 	}
 
-	err := db.Delete(&topic, "id = ?", id).Error
+	err := db.Delete(&topic, "slug = ?", slug).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"status": "error",
@@ -165,7 +166,7 @@ func GetAllTopics(c *fiber.Ctx) error {
 
 	var topics []model.Topic
 
-	db.Select("name", "id", "parent_id").Find(&topics)
+	db.Select("name", "id", "parent_id", "slug").Find(&topics)
 	if len(topics) == 0 {
 		return c.Status(404).JSON(fiber.Map{
 			"status": "error",
