@@ -12,6 +12,7 @@ type Exercise struct {
 	Content string `json:"content"`
 	Slug string `gorm:"uniqueIndex"`
 	TopicID uuid.UUID `json:"topic_id"`
+	Bookmarks []Bookmark
 }
 
 type Exercises struct {

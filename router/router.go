@@ -11,7 +11,8 @@ func SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
 	users := api.Group("/users")
 	topics := api.Group("/topics")
-	exercise := api.Group("/exercises")
+	exercises := api.Group("/exercises")
+	bookmarks := api.Group("/bookmarks")
 
 	api.Get("/check", handler.Check)
 	api.Post("/login", handler.Login)
@@ -34,10 +35,15 @@ func SetupRoutes(app *fiber.App) {
 	topics.Put("/:slug", handler.UpdateTopic)
 	topics.Delete("/:slug", handler.DeleteTopic)
 
-	exercise.Post("/", handler.CreateExercise)
-	exercise.Get("/:slug", handler.GetSingleExercise)
-	exercise.Get("/", handler.GetAllExercises)
-	exercise.Get("/topic/:topic_slug", handler.GetAllTopicExercises)
-	exercise.Put("/:slug", handler.UpdateExercise)
-	exercise.Delete("/:slug", handler.DeleteExercise)
+	exercises.Post("/", handler.CreateExercise)
+	exercises.Get("/:slug", handler.GetSingleExercise)
+	exercises.Get("/", handler.GetAllExercises)
+	exercises.Get("/topic/:topic_slug", handler.GetAllTopicExercises)
+	exercises.Put("/:slug", handler.UpdateExercise)
+	exercises.Delete("/:slug", handler.DeleteExercise)
+
+	bookmarks.Post("/", handler.CreateBookmark)
+	bookmarks.Get("/:exercise_id", handler.GetSingleBookmark)
+	bookmarks.Get("/", handler.GetAllUserBookmarks)
+	bookmarks.Delete("/:exercise_id", handler.DeleteBookmark)
 }
