@@ -16,6 +16,7 @@ type User struct {
 	VerificationToken string
 	Verified bool
 	VerifyAt *time.Time
+	Bookmarks []Bookmark
 }
 
 type Users struct {

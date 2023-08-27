@@ -14,6 +14,7 @@ type Topic struct {
 	ParentID *uuid.UUID `json:"parent_id"`
 	Parent *Topic
 	Exercises []Exercise
+	Bookmark []Bookmark
 }
 
 type Topics struct {
