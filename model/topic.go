@@ -13,6 +13,7 @@ type Topic struct {
 	Slug string `gorm:"uniqueIndex"`
 	ParentID *uuid.UUID `json:"parent_id"`
 	Parent *Topic
+	Exercises []Exercise
 }
 
 type Topics struct {
