@@ -10,7 +10,7 @@ import (
 )
 
 type updateTopic struct {
-	Name string `json:"name"`
+	Name    string `json:"name"`
 	Content string `json:"content"`
 }
 
@@ -21,9 +21,9 @@ func CreateTopic(c *fiber.Ctx) error {
 	err := c.BodyParser(topic)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Something is wrong with the input data",
-			"data": err,
+			"data":    err,
 		})
 	}
 
@@ -33,16 +33,16 @@ func CreateTopic(c *fiber.Ctx) error {
 	err = db.Create(&topic).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Could not create a topic",
-			"data": err,
+			"data":    err,
 		})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "success",
+		"status":  "success",
 		"message": "Topic created",
-		"data": nil,
+		"data":    nil,
 	})
 }
 
@@ -57,24 +57,24 @@ func GetSingleTopic(c *fiber.Ctx) error {
 	db.Find(&topic, "slug = ?", slug)
 	if topic.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "Topic not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
 	db.Select("name", "id", "parent_id", "slug").Find(&topicChildren, "parent_id = ?", topic.ID)
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "success",
+		"status":  "success",
 		"message": "Topic found",
 		"data": fiber.Map{
-			"name": topic.Name,
-			"content": topic.Content,
-			"slug": topic.Slug,
+			"name":      topic.Name,
+			"content":   topic.Content,
+			"slug":      topic.Slug,
 			"createdAt": topic.CreatedAt,
 			"updatedAt": topic.UpdatedAt,
-			"children": topicChildren,
+			"children":  topicChildren,
 		},
 	})
 }
@@ -89,9 +89,9 @@ func UpdateTopic(c *fiber.Ctx) error {
 	db.Find(&topic, "slug = ?", slug)
 	if topic.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "Topic not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
@@ -99,9 +99,9 @@ func UpdateTopic(c *fiber.Ctx) error {
 	err := c.BodyParser(&updateTopicData)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Something is wrong with the input data",
-			"data": err,
+			"data":    err,
 		})
 	}
 
@@ -111,18 +111,18 @@ func UpdateTopic(c *fiber.Ctx) error {
 	err = db.Save(&topic).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Could not update the topic",
-			"data": err,
+			"data":    err,
 		})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "success",
+		"status":  "success",
 		"message": "Topic updated",
 		"data": fiber.Map{
-			"name": topic.Name,
-			"content": topic.Content,
+			"name":      topic.Name,
+			"content":   topic.Content,
 			"createdAt": topic.CreatedAt,
 			"updatedAt": topic.UpdatedAt,
 		},
@@ -139,25 +139,25 @@ func DeleteTopic(c *fiber.Ctx) error {
 	db.Find(&topic, "slug = ?", slug)
 	if topic.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "Topic not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
 	err := db.Delete(&topic, "slug = ?", slug).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Failed to delete topic",
-			"data": err,
+			"data":    err,
 		})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "success",
+		"status":  "success",
 		"message": "Topic deleted",
-		"data": nil,
+		"data":    nil,
 	})
 }
 
@@ -169,9 +169,9 @@ func GetAllTopics(c *fiber.Ctx) error {
 	db.Select("name", "id", "parent_id", "slug").Find(&topics)
 	if len(topics) == 0 {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Topic not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
@@ -186,12 +186,12 @@ func GetAllTopics(c *fiber.Ctx) error {
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "sucess",
+		"status":  "sucess",
 		"message": "Topic Found",
 		"data": fiber.Map{
-			"main_topics": mainTopics,
+			"main_topics":    mainTopics,
 			"grouped_topics": groupedTopics,
-			"total_topics": len(topics),
+			"total_topics":   len(topics),
 		},
 	})
 }

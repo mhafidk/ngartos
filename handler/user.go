@@ -24,18 +24,18 @@ func GetCurrentUser(c *fiber.Ctx) error {
 	db.Find(&user, "email = ?", email)
 	if user.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "User not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "success",
+		"status":  "success",
 		"message": "User found",
 		"data": fiber.Map{
-			"username": user.Username,
-			"email": user.Email,
+			"username":  user.Username,
+			"email":     user.Email,
 			"createdAt": user.CreatedAt,
 			"updatedAt": user.UpdatedAt,
 		},
@@ -56,26 +56,26 @@ func GetSingleUser(c *fiber.Ctx) error {
 	db.Find(&user, "id = ?", id)
 	if user.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "User not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
 	if email != user.Email {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "User not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "success",
+		"status":  "success",
 		"message": "User found",
 		"data": fiber.Map{
-			"username": user.Username,
-			"email": user.Email,
+			"username":  user.Username,
+			"email":     user.Email,
 			"createdAt": user.CreatedAt,
 			"updatedAt": user.UpdatedAt,
 		},
@@ -92,9 +92,9 @@ func UpdateUser(c *fiber.Ctx) error {
 	db.Find(&user, "id = ?", id)
 	if user.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "User not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
@@ -102,9 +102,9 @@ func UpdateUser(c *fiber.Ctx) error {
 	err := c.BodyParser(&updateUserData)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Something is wrong with the input data",
-			"data": err,
+			"data":    err,
 		})
 	}
 
@@ -112,18 +112,18 @@ func UpdateUser(c *fiber.Ctx) error {
 	err = db.Save(&user).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Could not update the user",
-			"data": err,
+			"data":    err,
 		})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "success",
+		"status":  "success",
 		"message": "User updated",
 		"data": fiber.Map{
-			"username": user.Username,
-			"email": user.Email,
+			"username":  user.Username,
+			"email":     user.Email,
 			"createdAt": user.CreatedAt,
 			"updatedAt": user.UpdatedAt,
 		},
@@ -140,24 +140,24 @@ func DeleteUser(c *fiber.Ctx) error {
 	db.Find(&user, "id = ?", id)
 	if user.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "User not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
 	err := db.Delete(&user, "id = ?", id).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Failed to delete user",
-			"data": err,
+			"data":    err,
 		})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "success",
+		"status":  "success",
 		"message": "User deleted",
-		"data": nil,
+		"data":    nil,
 	})
 }

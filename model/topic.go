@@ -7,12 +7,12 @@ import (
 
 type Topic struct {
 	gorm.Model
-	ID uuid.UUID `gorm:"type:uuid"`
-	Name string `json:"name"`
-	Content string `json:"content"`
-	Slug string `gorm:"uniqueIndex"`
-	ParentID *uuid.UUID `json:"parent_id"`
-	Parent *Topic
+	ID        uuid.UUID  `gorm:"type:uuid"`
+	Name      string     `json:"name"`
+	Content   string     `json:"content"`
+	Slug      string     `gorm:"uniqueIndex"`
+	ParentID  *uuid.UUID `json:"parent_id"`
+	Parent    *Topic
 	Exercises []Exercise
 }
 

@@ -10,7 +10,7 @@ import (
 )
 
 type updateExercise struct {
-	Name string `json:"name"`
+	Name    string `json:"name"`
 	Content string `json:"content"`
 }
 
@@ -21,9 +21,9 @@ func CreateExercise(c *fiber.Ctx) error {
 	err := c.BodyParser(exercise)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Something is wrong with the input data",
-			"data": err,
+			"data":    err,
 		})
 	}
 
@@ -33,16 +33,16 @@ func CreateExercise(c *fiber.Ctx) error {
 	err = db.Create(&exercise).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Could not create exercise",
-			"data": err,
+			"data":    err,
 		})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "success",
+		"status":  "success",
 		"message": "Exercise created",
-		"data": nil,
+		"data":    nil,
 	})
 }
 
@@ -56,19 +56,19 @@ func GetSingleExercise(c *fiber.Ctx) error {
 	db.Find(&exercise, "slug = ?", slug)
 	if exercise.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "Exercise not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "success",
+		"status":  "success",
 		"message": "Exercise found",
 		"data": fiber.Map{
-			"name": exercise.Name,
-			"content": exercise.Content,
-			"slug": exercise.Slug,
+			"name":      exercise.Name,
+			"content":   exercise.Content,
+			"slug":      exercise.Slug,
 			"createdAt": exercise.CreatedAt,
 			"updatedAt": exercise.UpdatedAt,
 		},
@@ -85,9 +85,9 @@ func UpdateExercise(c *fiber.Ctx) error {
 	db.Find(&exercise, "slug = ?", slug)
 	if exercise.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "Exercise not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
@@ -95,9 +95,9 @@ func UpdateExercise(c *fiber.Ctx) error {
 	err := c.BodyParser(&updateexerciseData)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Something is wrong with the input data",
-			"data": err,
+			"data":    err,
 		})
 	}
 
@@ -107,18 +107,18 @@ func UpdateExercise(c *fiber.Ctx) error {
 	err = db.Save(&exercise).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Could not update the exercise",
-			"data": err,
+			"data":    err,
 		})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "success",
+		"status":  "success",
 		"message": "Exercise updated",
 		"data": fiber.Map{
-			"name": exercise.Name,
-			"content": exercise.Content,
+			"name":      exercise.Name,
+			"content":   exercise.Content,
 			"createdAt": exercise.CreatedAt,
 			"updatedAt": exercise.UpdatedAt,
 		},
@@ -135,25 +135,25 @@ func DeleteExercise(c *fiber.Ctx) error {
 	db.Find(&exercise, "slug = ?", slug)
 	if exercise.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "Exercise not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
 	err := db.Delete(&exercise, "slug = ?", slug).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Failed to delete exercise",
-			"data": err,
+			"data":    err,
 		})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "success",
+		"status":  "success",
 		"message": "Exercise deleted",
-		"data": nil,
+		"data":    nil,
 	})
 }
 
@@ -165,17 +165,17 @@ func GetAllExercises(c *fiber.Ctx) error {
 	db.Select("name", "id", "slug").Find(&exercises)
 	if len(exercises) == 0 {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Exercise not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "sucess",
+		"status":  "sucess",
 		"message": "Topic Found",
 		"data": fiber.Map{
-			"exercises": exercises,
+			"exercises":  exercises,
 			"total_data": len(exercises),
 		},
 	})
@@ -191,26 +191,26 @@ func GetAllTopicExercises(c *fiber.Ctx) error {
 	db.Find(&topic, "slug = ?", topic_slug)
 	if topic.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "Topic not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
 	db.Select("name", "id", "slug").Where("topic_id = ?", topic.ID).Find(&exercises)
 	if len(exercises) == 0 {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Exercise not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "sucess",
+		"status":  "sucess",
 		"message": "Topic Found",
 		"data": fiber.Map{
-			"exercises": exercises,
+			"exercises":  exercises,
 			"total_data": len(exercises),
 		},
 	})

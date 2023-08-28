@@ -20,16 +20,34 @@ type Dbinstance struct {
 var DB Dbinstance
 
 func Connect() {
-	p := config.Config("DB_PORT")
+	var pEnv, hostEnv, userEnv, nameEnv, passwordEnv string
+
+	environment := config.Config("ENVIRONMENT")
+	if environment == "DEV" {
+		pEnv = "DB_PORT_DEV"
+		hostEnv = "DB_HOST_DEV"
+		userEnv = "DB_USER_DEV"
+		nameEnv = "DB_NAME_DEV"
+		passwordEnv = "DB_PASSWORD_DEV"
+	} else {
+		pEnv = "DB_PORT"
+		hostEnv = "DB_HOST"
+		userEnv = "DB_USER"
+		nameEnv = "DB_NAME"
+		passwordEnv = "DB_PASSWORD"
+	}
+
+	p := config.Config(pEnv)
+	host := config.Config(hostEnv)
+	user := config.Config(userEnv)
+	name := config.Config(nameEnv)
+	password := config.Config(passwordEnv)
+
 	port, err := strconv.ParseUint(p, 10, 32)
 	if err != nil {
 		fmt.Println("Error parsing str to int")
 	}
 
-	host := config.Config("DB_HOST")
-	user := config.Config("DB_USER")
-	name := config.Config("DB_NAME")
-	password := config.Config("DB_PASSWORD")
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Jakarta", host, user, password, name, port)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{

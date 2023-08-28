@@ -21,9 +21,9 @@ func CreateBookmark(c *fiber.Ctx) error {
 	db.Find(&user, "email = ?", email)
 	if user.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "User not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
@@ -32,25 +32,25 @@ func CreateBookmark(c *fiber.Ctx) error {
 	err := c.BodyParser(bookmark)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Something is wrong with the input data",
-			"data": err,
+			"data":    err,
 		})
 	}
 
 	err = db.Create(&bookmark).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Could not create bookmark",
-			"data": err,
+			"data":    err,
 		})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "success",
+		"status":  "success",
 		"message": "Bookmark created",
-		"data": nil,
+		"data":    nil,
 	})
 }
 
@@ -69,9 +69,9 @@ func GetSingleBookmark(c *fiber.Ctx) error {
 	db.Find(&user, "email = ?", email)
 	if user.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "User not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
@@ -88,7 +88,7 @@ func GetSingleBookmark(c *fiber.Ctx) error {
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "success",
+		"status":  "success",
 		"message": message,
 		"data": fiber.Map{
 			"bookmarked": bookmarked,
@@ -111,34 +111,34 @@ func DeleteBookmark(c *fiber.Ctx) error {
 	db.Find(&user, "email = ?", email)
 	if user.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "User not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
 	db.Find(&bookmark, "exercise_id = ? AND user_id = ?", exerciseID, user.ID)
 	if bookmark.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "Bookmark not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
 	err := db.Unscoped().Delete(&bookmark).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
-			"status": "error",
+			"status":  "error",
 			"message": "Failed to delete exercise",
-			"data": err,
+			"data":    err,
 		})
 	}
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "success",
+		"status":  "success",
 		"message": "Bookmark deleted",
-		"data": nil,
+		"data":    nil,
 	})
 }
 
@@ -155,9 +155,9 @@ func GetAllUserBookmarks(c *fiber.Ctx) error {
 	db.Preload("Bookmarks").Find(&user, "email = ?", email)
 	if user.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{
-			"status": "not found",
+			"status":  "not found",
 			"message": "User not found",
-			"data": nil,
+			"data":    nil,
 		})
 	}
 
@@ -169,10 +169,10 @@ func GetAllUserBookmarks(c *fiber.Ctx) error {
 	db.Select("id", "name", "slug").Find(&exercises, exerciseIDs)
 
 	return c.Status(200).JSON(fiber.Map{
-		"status": "sucess",
+		"status":  "sucess",
 		"message": "Bookmark Found",
 		"data": fiber.Map{
-			"bookmarks": exercises,
+			"bookmarks":  exercises,
 			"total_data": len(exercises),
 		},
 	})

@@ -7,11 +7,11 @@ import (
 
 type Exercise struct {
 	gorm.Model
-	ID uuid.UUID `gorm:"type:uuid"`
-	Name string `json:"name"`
-	Content string `json:"content"`
-	Slug string `gorm:"uniqueIndex"`
-	TopicID uuid.UUID `json:"topic_id"`
+	ID        uuid.UUID `gorm:"type:uuid"`
+	Name      string    `json:"name"`
+	Content   string    `json:"content"`
+	Slug      string    `gorm:"uniqueIndex"`
+	TopicID   uuid.UUID `json:"topic_id"`
 	Bookmarks []Bookmark
 }
 

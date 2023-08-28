@@ -9,14 +9,14 @@ import (
 
 type User struct {
 	gorm.Model
-	ID uuid.UUID `gorm:"type:uuid"`
-	Username string `gorm:"uniqueIndex" json:"username"`
-	Email string `gorm:"uniqueIndex" json:"email"`
-	Password string `json:"password"`
+	ID                uuid.UUID `gorm:"type:uuid"`
+	Username          string    `gorm:"uniqueIndex" json:"username"`
+	Email             string    `gorm:"uniqueIndex" json:"email"`
+	Password          string    `json:"password"`
 	VerificationToken string
-	Verified bool
-	VerifyAt *time.Time
-	Bookmarks []Bookmark
+	Verified          bool
+	VerifyAt          *time.Time
+	Bookmarks         []Bookmark
 }
 
 type Users struct {

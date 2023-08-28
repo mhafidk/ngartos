@@ -17,7 +17,7 @@ func main() {
 
 	router.SetupRoutes(app)
 
-	app.Use(func (c *fiber.Ctx) error {
+	app.Use(func(c *fiber.Ctx) error {
 		return c.SendStatus(404)
 	})
 
