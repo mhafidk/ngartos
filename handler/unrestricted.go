@@ -14,6 +14,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type forgotPassword struct {
+	Email string `json:"email"`
+}
+
 func Check(c *fiber.Ctx) error {
 	return c.Status(200).JSON(fiber.Map{
 		"status":  "ok",
@@ -186,6 +190,66 @@ func VerifyEmail(c *fiber.Ctx) error {
 	return c.Status(200).JSON(fiber.Map{
 		"status":  "success",
 		"message": "User verified",
+		"data":    nil,
+	})
+}
+
+func ForgotPassword(c *fiber.Ctx) error {
+	var forgotPasswordData forgotPassword
+	err := c.BodyParser(&forgotPasswordData)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"status":  "error",
+			"message": "Something is wrong with the input data",
+			"data":    err,
+		})
+	}
+
+	if forgotPasswordData.Email == "" {
+		return c.Status(400).JSON(fiber.Map{
+			"status":  "error",
+			"message": "Email could not be blank",
+			"data":    nil,
+		})
+	}
+
+	db := database.DB.Db
+	user := new(model.User)
+
+	db.Find(&user, "email = ?", forgotPasswordData.Email)
+	if user.ID == uuid.Nil {
+		return c.Status(404).JSON(fiber.Map{
+			"status":  "error",
+			"message": "User not found",
+			"data":    nil,
+		})
+	}
+
+	forgotPasswordToken := randstr.Hex(16)
+	user.ForgotPasswordToken = forgotPasswordToken
+
+	err = db.Save(&user).Error
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"status":  "error",
+			"message": "Could not update the user",
+			"data":    err,
+		})
+	}
+
+	utils.SendForgotPasswordEmail(forgotPasswordToken, user.Email)
+
+	return c.Status(200).JSON(fiber.Map{
+		"status":  "success",
+		"message": "Forgot password succeed",
+		"data":    nil,
+	})
+}
+
+func ResetPassword(c *fiber.Ctx) error {
+	return c.Status(200).JSON(fiber.Map{
+		"status":  "success",
+		"message": "Reset password succeed",
 		"data":    nil,
 	})
 }

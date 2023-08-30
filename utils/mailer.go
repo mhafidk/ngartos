@@ -30,3 +30,27 @@ func SendVerificationEmail(verificationToken, email string) {
 		log.Println(err)
 	}
 }
+
+func SendForgotPasswordEmail(forgotPasswordToken, email string) {
+	from := config.Config("MAIL_FROM")
+	pass := config.Config("MAIL_PASS")
+	to := email
+
+	var forgotPasswordUrl string
+	if config.Config("ENVIRONMENT") == "DEV" {
+		forgotPasswordUrl = config.Config("FORGOT_PASSWORD_URL_DEV")
+	} else {
+		forgotPasswordUrl = config.Config("FORGOT_PASSWORD_URL")
+	}
+
+	body := "Klik link di bawah ini untuk mereset password Anda.\n\n" + forgotPasswordUrl + forgotPasswordToken
+	msg := "From: " + from + "\n" +
+		"To: " + to + "\n" +
+		"Subject: Reset Password\n\n" +
+		body
+
+	err := smtp.SendMail("smtp.gmail.com:587", smtp.PlainAuth("", from, pass, "smtp.gmail.com"), from, []string{to}, []byte(msg))
+	if err != nil {
+		log.Println(err)
+	}
+}
