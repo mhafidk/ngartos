@@ -146,7 +146,7 @@ func DeleteUser(c *fiber.Ctx) error {
 		})
 	}
 
-	err := db.Delete(&user, "id = ?", id).Error
+	err := db.Unscoped().Delete(&user, "id = ?", id).Error
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"status":  "error",
