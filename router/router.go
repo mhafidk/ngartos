@@ -16,10 +16,18 @@ func SetupRoutes(app *fiber.App) {
 
 	api.Get("/check", handler.Check)
 	api.Post("/login", handler.Login)
+
 	users.Get("/verify/:token", handler.VerifyEmail)
 	users.Post("/", handler.CreateUser)
 	users.Post("/forgot-password", handler.ForgotPassword)
 	users.Put("/reset-password/:token", handler.ResetPassword)
+
+	topics.Get("/:slug", handler.GetSingleTopic)
+	topics.Get("/", handler.GetAllTopics)
+
+	exercises.Get("/:slug", handler.GetSingleExercise)
+	exercises.Get("/", handler.GetAllExercises)
+	exercises.Get("/topic/:topic_slug", handler.GetAllTopicExercises)
 
 	jwtSecretKey := config.Config("JWT_SECRET_KEY")
 	app.Use(jwtware.New(jwtware.Config{
@@ -32,15 +40,10 @@ func SetupRoutes(app *fiber.App) {
 	users.Delete("/:id", handler.DeleteUser)
 
 	topics.Post("/", handler.CreateTopic)
-	topics.Get("/:slug", handler.GetSingleTopic)
-	topics.Get("/", handler.GetAllTopics)
 	topics.Put("/:slug", handler.UpdateTopic)
 	topics.Delete("/:slug", handler.DeleteTopic)
 
 	exercises.Post("/", handler.CreateExercise)
-	exercises.Get("/:slug", handler.GetSingleExercise)
-	exercises.Get("/", handler.GetAllExercises)
-	exercises.Get("/topic/:topic_slug", handler.GetAllTopicExercises)
 	exercises.Put("/:slug", handler.UpdateExercise)
 	exercises.Delete("/:slug", handler.DeleteExercise)
 
