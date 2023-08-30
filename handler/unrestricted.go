@@ -18,6 +18,10 @@ type forgotPassword struct {
 	Email string `json:"email"`
 }
 
+type updateUserPassword struct {
+	Password string `json:"password"`
+}
+
 func Check(c *fiber.Ctx) error {
 	return c.Status(200).JSON(fiber.Map{
 		"status":  "ok",
@@ -247,9 +251,54 @@ func ForgotPassword(c *fiber.Ctx) error {
 }
 
 func ResetPassword(c *fiber.Ctx) error {
+	db := database.DB.Db
+
+	var user model.User
+
+	token := c.Params("token")
+
+	db.Find(&user, "forgot_password_token = ?", token)
+	if user.ID == uuid.Nil {
+		return c.Status(404).JSON(fiber.Map{
+			"status":  "not found",
+			"message": "User not found",
+			"data":    nil,
+		})
+	}
+
+	var updateUserPasswordData updateUserPassword
+	err := c.BodyParser(&updateUserPasswordData)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"status":  "error",
+			"message": "Something is wrong with the input data",
+			"data":    err,
+		})
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(updateUserPasswordData.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"status":  "error",
+			"message": "There is something wrong",
+			"data":    err,
+		})
+	}
+
+	user.Password = string(hash)
+	user.ForgotPasswordToken = ""
+	err = db.Save(&user).Error
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"status":  "error",
+			"message": "Could not update the user",
+			"data":    err,
+		})
+	}
+
 	return c.Status(200).JSON(fiber.Map{
 		"status":  "success",
-		"message": "Reset password succeed",
+		"message": "Password updated",
 		"data":    nil,
 	})
 }
