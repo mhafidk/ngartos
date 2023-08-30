@@ -16,7 +16,7 @@ func SetupRoutes(app *fiber.App) {
 
 	api.Get("/check", handler.Check)
 	api.Post("/login", handler.Login)
-	users.Put("/verify/:token", handler.VerifyEmail)
+	users.Get("/verify/:token", handler.VerifyEmail)
 	users.Post("/", handler.CreateUser)
 
 	jwtSecretKey := config.Config("JWT_SECRET_KEY")

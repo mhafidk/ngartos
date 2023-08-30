@@ -9,6 +9,7 @@ import (
 	"github.com/mhafidk/ngartos/config"
 	"github.com/mhafidk/ngartos/database"
 	"github.com/mhafidk/ngartos/model"
+	"github.com/mhafidk/ngartos/utils"
 	"github.com/thanhpk/randstr"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -142,6 +143,8 @@ func CreateUser(c *fiber.Ctx) error {
 			"data":    err,
 		})
 	}
+
+	utils.SendVerificationEmail(verificationToken, user.Email)
 
 	return c.Status(200).JSON(fiber.Map{
 		"status":  "success",
